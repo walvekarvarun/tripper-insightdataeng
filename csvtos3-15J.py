@@ -113,9 +113,9 @@ def ext_upl_del(zipped,Upload):
     dir_path = os.getcwd()
     s3 = boto3.client('s3')
     bucket_name = 'bnbdatadump'
-    df = pd.read_csv('calendarzip.txt',delimiter=" ", header=None)
+    df = pd.read_csv(zipped,delimiter=" ", header=None)
     df = df.rename(columns={0: 'url'})
-    with open('all_calendar_data.txt', 'wb') as f_out:
+    with open(Upload, 'wb') as f_out:
         for idx,row in df.iterrows():
             link = row['url']
             url_parsed = urlparse(link)
@@ -124,8 +124,8 @@ def ext_upl_del(zipped,Upload):
             urllib.request.urlretrieve(link, final_dir)
             with gzip.open(final_dir, 'rb') as f_in:
                 shutil.copyfileobj(f_in, f_out)
-    all_data_dir = os.path.join(dir_path,'all_calendar_data.txt')
-    s3.upload_file(all_data_dir,bucket_name,'all_calendar_data.txt')
+    all_data_dir = os.path.join(dir_path,Upload)
+    s3.upload_file(all_data_dir,bucket_name,Upload)
     print('File Uploaded to S3')
     os.remove(all_data_dir)
     print('File Removed from local')
@@ -144,32 +144,27 @@ def extract_all():
     all_data_cal = 'all_review_data.txt'
     ext_upl_del(calendar,all_data_cal)
 
+#def read_yelp_relevant():
+#    
+#    
+#df = pd.read_json('business.json', lines = True)
+#dfyelpcity = pd.DataFrame(columns = columns)
+#
+#for idx,row in df.iterrows():
+#    if row['city'] in uniquecities:
+#        #print(row['city'])
+#        df1 = pd.DataFrame(row)
+#        print(df1)
+#        dfyelpcity.append(df1)
+        
        
 def main():
     allurls = scrapebnb()
-    print('scraped the airbnb website and extracted ALL the dataurls')
-    
-    allzipurls = getzipurls(allurls)
-    print('filtered all urls only to get the zipped files as these have detailed data')
-    
+    allzipurls = getzipurls(allurls) 
     bnbcities = bnb_listings_cities(allurls)
-    print('Got a list of ALL cities present in the airbnb - to compare with the yelp cities ')
-    print(bnbcities)
-    
     yelpcities = read_yelp_cities()
-    print('Got a list of ALL yelp cities in the yelp business dataset')
-    print(yelpcities)
-    
     uniquecities = get_unique_cities(bnbcities,yelpcities)
-    print('Got a list of Unique cities belonging to both the datasets')
-    print(uniquecities)
-    
     bnb_uniq_urls(uniquecities,allzipurls)
-    print('created 3 text files of the airbnb dataset - listings.txt,review.txt,calendar.txt which has all zipurls of only unique cities' )
-    
-    print('Reading each zipurl line-by-line - unzipping - loading all data in one text file -- eg - all listings data for all unique cities will be in this text file')
-    print('Also uploading this textfile to s3')
-    print('Also deleting the file in the local system after uploading to s3')
     extract_all()
     
     
