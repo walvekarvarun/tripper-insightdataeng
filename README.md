@@ -8,7 +8,8 @@ Helping Busy Professionals to find the right vacation home based on what they li
 
 ## Technology Stack:
 S3, Spark, PostGres, Flask
-![TechStack] /Users/varunwalvekar/Desktop/Screen Shot 2019-06-24 at 7.24.29 PM.png
+![TechStack] (Users/varunwalvekar/Desktop/Screen Shot 2019-06-24 at 7.24.29 PM.png)
+
 
 
 ## SETUP
