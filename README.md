@@ -8,6 +8,8 @@ Helping Busy Professionals to find the right vacation home based on what they li
 
 ## Technology Stack:
 S3, Spark, PostGres, Flask
+![TechStack] /Users/varunwalvekar/Desktop/Screen Shot 2019-06-24 at 7.24.29 PM.png
+
 
 ## SETUP
 1. Script written to scrape data from Airbnb and Yelp Website and load into S3
