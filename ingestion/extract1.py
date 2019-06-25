@@ -13,7 +13,7 @@ import urllib.request, os, gzip, boto3, pandas as pd
 from urllib.parse import urlparse
 import shutil
 
-#Function to read all cities in the yelp business.json dataset
+#Function to read all cities sin the yelp business.json dataset
 def read_yelp_cities():
     df = pd.read_json('business.json', lines = True)
     city = df.city.unique().tolist()
@@ -143,19 +143,12 @@ def extract_all():
     calendar = 'calendarzip.txt'
     all_data_cal = 'all_review_data.txt'
     ext_upl_del(calendar,all_data_cal)
+    
+def write_uniq_cities_to_file(uniquecities):
+    with open('unique_cities.txt', 'w') as f:
+        for item in uniquecities:
+            f.write("%s\n" % item)
 
-#def read_yelp_relevant():
-#    
-#    
-#df = pd.read_json('business.json', lines = True)
-#dfyelpcity = pd.DataFrame(columns = columns)
-#
-#for idx,row in df.iterrows():
-#    if row['city'] in uniquecities:
-#        #print(row['city'])
-#        df1 = pd.DataFrame(row)
-#        print(df1)
-#        dfyelpcity.append(df1)
         
        
 def main():
@@ -164,6 +157,7 @@ def main():
     bnbcities = bnb_listings_cities(allurls)
     yelpcities = read_yelp_cities()
     uniquecities = get_unique_cities(bnbcities,yelpcities)
+    write_uniq_cities_to_file(uniquecities)
     bnb_uniq_urls(uniquecities,allzipurls)
     extract_all()
     
