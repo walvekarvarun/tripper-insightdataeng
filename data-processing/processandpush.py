@@ -6,17 +6,14 @@ Created on Mon Jun 24 17:28:15 2019
 @author: varunwalvekar
 """
 from pyspark import SparkContext, SparkConf
-from pyspark.sql import SQLContext, DataFrameWriter, DataFrameReader
+from pyspark.sql import SQLContext
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
 from pyspark.sql.functions import lower
 from math import radians, cos, sin, asin, sqrt  
-from pyspark.sql.types import DoubleType,FloatType
-from pyspark.sql.functions import lit
+from pyspark.sql.types import FloatType
 from pyspark.sql.functions import udf,array
-from math import radians, cos, sin, asin, sqrt    
-from pyspark.sql.types import *
-from pyspark.sql.functions import *
+from math import radians, cos, sin, asin, sqrt   
 
 
 ## Function to flatted json file
@@ -36,7 +33,11 @@ def flatten_df(nested_df, layers):
     return flat_df[-1]
 
 ## Function to calculate distances
-def haversine(lon1, lat1, lon2, lat2 ):
+def haversine(arr):
+    lon1 = arr[0]
+    lat1 = arr[1] 
+    lon2 = arr[2]
+    lat2 = arr[3]
     lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
     dlon = lon2 - lon1 
     dlat = lat2 - lat1
