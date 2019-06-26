@@ -108,6 +108,7 @@ def calcdistancedf(yelpbusiness,bnbsummary):
     udf_haversine = udf(lambda z: haversine(z), FloatType())
     df1 = df.select('city','listing_id','bnblong','bnblat','business_id','yelplong','yelplat',udf_haversine(array('bnblong','bnblat','yelplong','yelplat')).alias('distance'))
     df1 = df1.selectExpr('city','listing_id','business_id','distance')
+    
     return df1
 
 
@@ -127,7 +128,13 @@ def get_all_categories(df):
 def pushtopostgres(df,tablename):
     df1.write.format("jdbc").option("url", "jdbc:postgresql://<ip+port>/dbname").option("dbtable", tablename).option("user", <username>).option("password", <password>).save()
 
-
+##################### MAPYELPBUSINESSTOCATEGORYID's
+def mapcategorytoyelp(row):
+    categories = []
+    if row["categories"] != None:
+        categories = row["categories"].split(", ")
+    return zip([row.business_id] * len(categories), [category_dict[cat] for cat in categories])                                   
+                        
 #################### MAIN
     
 def main():
@@ -162,8 +169,17 @@ def main():
     sql_context = SQLContext(sc)
     schema = StructType([StructField("id", IntegerType(), False),StructField("name", StringType(), False)])
     category = sql_context.createDataFrame(zip(range(len(categories)), categories), schema)
-    pushtopostgres(category,distance)
+    pushtopostgres(category,uniquecategories)
     
+    # Create and Push Link between yelp and category
+    category_dict = {}
+    for row in category.collect():
+        category_dict[row.name] = row.id
+                                  
+    yelpcategory = yelpbusiness.rdd.flatMap(mapcategorytoyelp)
+    schema2 = StructType([StructField("yelp_id", StringType(), False),StructField("category_id", IntegerType(), False)])
+    yelpcategories = sql_context.createDataFrame(yelpcategory, schema2)
+    pushtopostgres(yelpcategories,yelpcategory)
 if __name__ == "__main__":
     main()
         
