@@ -1,20 +1,30 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Jun 30 12:11:02 2019
+
+@author: varunwalvekar
+"""
+
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 import pandas as pd
 import psycopg2
+import dash_table
+
 #import dash_table_experiments as dt
 
 
-dataframe = pd.DataFrame()
+#dataframe = pd.DataFrame()
 
 def get_unique_cities():
     query = """
     select distinct city from distance
     """
     return fetch(query)
-    
+
 def get_interests_from_city(city):
     query = """
     select distinct uc.name
@@ -26,11 +36,11 @@ def get_interests_from_city(city):
 
 def get_results(city,interest):
     query = """
-    select distinct b.listing_id,b.name as bnbname,b.price as bnbprice,d.distance as distance
+    select distinct b.listing_id,b.name as bnbname,b.price as bnbprice
     from uniquecategories uc, yelpcategory yc, yelpbusiness yb, distance d, bnbsum b
     where b.listing_id = d.listing_id and yb.business_id = d.business_id and 
     yb.business_id = yc.yelp_id and yc.category_id = uc.id
-    and b.city = '{}' and uc.name='{}' order by d.distance desc limit 5
+    and b.city = '{}' and uc.name='{}' limit 5
         """.format(city,interest)
     return fetch(query)
 
@@ -39,6 +49,7 @@ def fetch(query):
     df = pd.read_sql(query,connection)
     connection.close()
     return df
+
 
 def build_table(dataframe):
     return html.Table(
@@ -59,8 +70,8 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.layout = html.Div(
                 children=[
-                        
-                        
+
+
                     html.Div(
                     [
                     html.Label('Select City'),
@@ -70,8 +81,8 @@ app.layout = html.Div(
                             placeholder = "Select a city")
                     ])
                     ,
-                    
-                    
+
+
                     html.Div(
                     [
                     html.Label('Select Interest'),
@@ -80,18 +91,23 @@ app.layout = html.Div(
                             placeholder = "Select an Interest"
                             )
                     ]),
-                    
-                    
+
+
+
                     html.Div(
-                    
-                    html.H4('The Best Places you can stay at are : '),
-                    id = 'result_table'
-                    build_table(dataframe)
-                    )
+                            id = 'tableDiv',
+                            children = dash_table.DataTable(
+                            id = 'table'
+                                    )
+                            )
+
+#                    html.Div(
+#                            id ='result_table'
+#                            )
+
     ])
-
 #df = get_results(city,interest)    
-
+# [listing_id, bnbname, bnbprice, distance]
 
 
 @app.callback(
@@ -100,13 +116,21 @@ app.layout = html.Div(
 def interest_dropdown(city):
     dfinterests = get_interests_from_city(city)
     return[{"label": l, "value": l} for l in dfinterests.name]
-             
+
+
 @app.callback(
-     Output("result_table","figure"),
+     Output("tableDiv","children"),
      [Input("city_dropdown","value"),Input("interest_dropdown","value")])
 def generate_table(city,interest):
-    dataframe = get_results(city,interest)
-    #build_table(dataframe)
-
+    df = get_results(city,interest)
+    mycolumns = [{'name': i, 'id': i} for i in df.columns]
+    return html.Div([
+                dash_table.DataTable(
+            id='table',
+            columns=mycolumns,
+            data=df.to_dict("rows") )
+        ])
+    #return build_table(dataframe)
 if __name__ == '__main__':
     app.run_server(debug=True,host='0.0.0.0')
+                                               
