@@ -17,7 +17,13 @@ joinyelp : joining the data based on businessid
 
 caldistancedf : get both the joined bnb and yelp data into appropriate format and calculate distances between each using haversine function
 
-get_all_categories : map categories to businesss_id
+get_all_categories : map categories to businesss_id and get categories dataframe
+
+pushtopostgres : 
+1. bnbdataframe
+2. yelpdataframe
+3. ditancedataframe
+4. yelpcategory
 
 
 
