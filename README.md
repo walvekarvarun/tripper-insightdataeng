@@ -25,6 +25,7 @@ install requests , request, urllib3, bs4 boto3 and pandas
 
 
 ## Technology Stack:
+![Tech Stack]()
 S3, Spark, PostGres, Flask
 
 
