@@ -1,7 +1,7 @@
 # TRIPPER
 
-## Problem Statement:
-Analyse data to rank highly rated events/restaurants/businesses and suggest the best(highly rated/least cost) place to stay around these events/restaurants/businesses.
+## Problem Statement and Business Case:
+Analyse big data to rank highly rated businesses and suggest the best(highly rated/least cost) housing option around these businesses.
 
 ## Business Case
 Helping Busy Professionals to find the right vacation home based on what they like/want to do!
