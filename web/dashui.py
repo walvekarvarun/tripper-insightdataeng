@@ -79,7 +79,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background']},
                     dcc.Dropdown(
                             id = 'city_dropdown',
                             options = [{"label": l, "value": l} for l in dfcity.city],
-                            placeholder = "Select a city,style{'textAlign': 'center'}")
+                            placeholder = "Select a city")
 
                     ])
                     ,
@@ -92,7 +92,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background']},
                     #html.Label('Select Interest'),
                     dcc.Dropdown(
                             id = 'interest_dropdown',
-                            placeholder = "Select an Interest,style{'textAlign': 'center'}"
+                            placeholder = "Select an Interest"
                             )
                     ]), 
                     
