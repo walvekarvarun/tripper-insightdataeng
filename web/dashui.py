@@ -48,7 +48,7 @@ def get_businesses(city,interest):
     return fetch(query)
 
 def fetch(query):
-    connection = psycopg2.connect(database='tripperdump', user='tripper',password='tripper', host='localhost', port = 5431)
+    connection = psycopg2.connect(database=<dbname>, user=<username>,password=<password>, host='localhost', port = <port>)
     df = pd.read_sql(query,connection)
     connection.close()
     return df
